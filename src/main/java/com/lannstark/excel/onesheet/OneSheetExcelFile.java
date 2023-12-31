@@ -19,10 +19,6 @@ public final class OneSheetExcelFile<T> extends SXSSFExcelFile<T> {
 	private static final int COLUMN_START_INDEX = 0;
 	private int currentRowIndex = ROW_START_INDEX;
 
-	public OneSheetExcelFile(Class<T> type) {
-		super(type);
-	}
-
 	public OneSheetExcelFile(List<T> data, Class<T> type) {
 		super(data, type);
 	}
@@ -58,7 +54,12 @@ public final class OneSheetExcelFile<T> extends SXSSFExcelFile<T> {
 
 	@Override
 	public void addRows(List<T> data) {
-		renderBody(data, currentRowIndex++, COLUMN_START_INDEX);
+		if (currentRowIndex == 0) {
+			currentRowIndex = sheet.getLastRowNum() + 1;
+		}
+		for (Object renderedData : data) {
+			renderBody(renderedData, currentRowIndex++, COLUMN_START_INDEX);
+		}
 	}
 
 }

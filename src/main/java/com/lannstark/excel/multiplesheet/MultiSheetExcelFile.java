@@ -21,11 +21,6 @@ public class MultiSheetExcelFile<T> extends SXSSFExcelFile<T> {
 	private static final int COLUMN_START_INDEX = 0;
 	private int currentRowIndex = ROW_START_INDEX;
 
-	public MultiSheetExcelFile(Class<T> type) {
-		super(type);
-		wb.setZip64Mode(Zip64Mode.Always);
-	}
-
 	/*
 	 * If you use SXSSF with hug data, you need to set zip mode
 	 * see http://apache-poi.1045710.n5.nabble.com/Bug-62872-New-Writing-large-files-with-800k-rows-gives-java-io-IOException-This-archive-contains-unc-td5732006.html
@@ -55,6 +50,9 @@ public class MultiSheetExcelFile<T> extends SXSSFExcelFile<T> {
 
 	@Override
 	public void addRows(List<T> data) {
+		if (currentRowIndex == 0) {
+			currentRowIndex = sheet.getLastRowNum() + 1;
+		}
 		for (Object renderedData : data) {
 			renderBody(renderedData, currentRowIndex++, COLUMN_START_INDEX);
 			if (currentRowIndex == maxRowCanBeRendered) {
